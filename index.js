@@ -21,6 +21,7 @@ async function run() {
         await client.connect();
         const database = client.db('furniture');
         const productCollection = database.collection('products');
+        const orderCollection = database.collection('orders');
 
         // send data to the UI
         app.get('/products', async (req, res)=>{
@@ -41,6 +42,13 @@ async function run() {
             const query = { _id: ObjectID(id) };
             const product = await productCollection.findOne(query);
             res.send(product);
+        })
+
+        // get the order from ui
+        app.post('/order', async (req, res)=>{
+            const newOrder = req.body;
+            const result = await orderCollection.insertOne(newOrder);
+            res.send(result);
         })
 
     }finally{
