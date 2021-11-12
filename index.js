@@ -24,7 +24,13 @@ async function run() {
 
         // send data to the UI
         app.get('/products', async (req, res)=>{
-            const products = productCollection.find({}).limit(4);
+            const products = productCollection.find({}).limit(6);
+            const result = await products.toArray();
+            res.send(result);
+        });
+        // send data to the UI
+        app.get('/shop', async (req, res)=>{
+            const products = productCollection.find({});
             const result = await products.toArray();
             res.send(result);
         });
