@@ -70,6 +70,13 @@ async function run() {
             res.send(result);
         })
 
+        // get the review from ui
+        app.get('/reviews', async (req, res)=>{
+            const reviews = reviewCollection.find({});
+            const result = await reviews.toArray();
+            res.send(result);
+        })
+
         // get the new product from ui
         app.post('/product', async (req, res)=>{
             const newProduct = req.body;
@@ -93,7 +100,7 @@ async function run() {
             res.send(result);
         })
 
-        // get the new product from ui
+        // get the specific user from ui
         app.get('/user/:userEmail', async (req, res)=>{
             const userEmail = req.params.userEmail;
             const query = { email: userEmail };
@@ -119,6 +126,8 @@ async function run() {
                 res.send(result);
             }
         })
+
+        // get user
 
     }finally{
         // await client.close();
