@@ -39,6 +39,14 @@ async function run() {
             res.send(result);
         });
 
+        // delete product
+        app.delete('/product/:productId', async (req, res)=>{
+            const id = req.params.productId;
+            const query = {_id: ObjectId(id)};
+            const result = await productCollection.deleteOne(query);
+            res.send(result);
+        })
+
         // send specific data to the UI
         app.get('/purchase/:id', async(req, res)=>{
             const id = req.params.id;
@@ -63,6 +71,13 @@ async function run() {
             res.send(result)
         })
 
+        // get all the order
+        app.get('/orders', async(req, res)=>{
+            const orders = orderCollection.find({});
+            const result = await orders.toArray();
+            res.send(result);
+        })
+
         // get the review from ui
         app.post('/reviews', async (req, res)=>{
             const newReview = req.body;
@@ -84,7 +99,6 @@ async function run() {
             res.send(result);
         })
 
-        // delete my order
         // delete my orders
         app.delete('/order/:productId', async (req, res)=>{
             const id = req.params.productId;
@@ -97,6 +111,13 @@ async function run() {
         app.post('/users', async (req, res)=>{
             const newUser = req.body;
             const result = await userCollection.insertOne(newUser);
+            res.send(result);
+        })
+
+        // get the total user
+        app.get('/users', async (req, res)=>{
+            const users = userCollection.find({});
+            const result = await users.toArray();
             res.send(result);
         })
 
