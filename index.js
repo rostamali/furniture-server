@@ -3,6 +3,7 @@ const app = express();
 const port = process.env.PORT || 5000;
 const { MongoClient } = require('mongodb');
 require('dotenv').config();
+const ObjectId = require('mongodb').ObjectId;
 
 const ObjectID = require('mongodb').ObjectID;
 
@@ -22,6 +23,8 @@ async function run() {
         const database = client.db('furniture');
         const productCollection = database.collection('products');
         const orderCollection = database.collection('orders');
+        const reviewCollection = database.collection('reviews');
+        const userCollection = database.collection('users');
 
         // send data to the UI
         app.get('/products', async (req, res)=>{
@@ -49,6 +52,72 @@ async function run() {
             const newOrder = req.body;
             const result = await orderCollection.insertOne(newOrder);
             res.send(result);
+        })
+
+        // get specific user order
+        app.get('/order/:userEmail', async (req, res)=>{
+            const userEmail = req.params.userEmail;
+            const query = { email: userEmail };
+            const orders = orderCollection.find(query);
+            const result = await orders.toArray();
+            res.send(result)
+        })
+
+        // get the review from ui
+        app.post('/reviews', async (req, res)=>{
+            const newReview = req.body;
+            const result = await reviewCollection.insertOne(newReview);
+            res.send(result);
+        })
+
+        // get the new product from ui
+        app.post('/product', async (req, res)=>{
+            const newProduct = req.body;
+            const result = await productCollection.insertOne(newProduct);
+            res.send(result);
+        })
+
+        // delete my order
+        // delete my orders
+        app.delete('/order/:productId', async (req, res)=>{
+            const id = req.params.productId;
+            const query = {_id: ObjectId(id)};
+            const result = await orderCollection.deleteOne(query);
+            res.send(result);
+        })
+
+        // get the new product from ui
+        app.post('/users', async (req, res)=>{
+            const newUser = req.body;
+            const result = await userCollection.insertOne(newUser);
+            res.send(result);
+        })
+
+        // get the new product from ui
+        app.get('/user/:userEmail', async (req, res)=>{
+            const userEmail = req.params.userEmail;
+            const query = { email: userEmail };
+            const result = await userCollection.findOne(query);
+            res.send(result);
+        })
+
+        // update user
+        app.put('/user/:userEmail', async (req, res)=>{
+            const updateEmail = req.params.userEmail;
+            const updateRole = req.body.role;
+            const query = {email: updateEmail};
+            const result = userCollection.findOne(query);
+            if(result.role !== "admin"){
+                const result = await userCollection.updateOne(
+                    query, 
+                    {$set:
+                      {
+                        role : updateRole
+                      }
+                    }
+                );
+                res.send(result);
+            }
         })
 
     }finally{
